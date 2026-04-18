@@ -1,953 +1,1571 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AgriLink – Bridging Farmers and Buyers</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --green-dark: #2d5016;
-    --green-mid: #4a7c20;
-    --green-light: #6ea832;
-    --green-pale: #eaf3de;
-    --amber: #c97d12;
-    --amber-light: #f5b942;
-    --amber-pale: #fdf3dc;
-    --cream: #faf8f3;
-    --text: #1a2410;
-    --text-mid: #3d4a30;
-    --text-muted: #6b7a58;
-    --white: #ffffff;
-    --border: rgba(74,124,32,0.15);
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgriLink – Bridging Farmers and Buyers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green-dark: #2d5016;
+      --green-mid: #4a7c20;
+      --green-light: #6ea832;
+      --green-pale: #eaf3de;
+      --amber: #c97d12;
+      --amber-light: #f5b942;
+      --amber-pale: #fdf3dc;
+      --cream: #faf8f3;
+      --text: #1a2410;
+      --text-mid: #3d4a30;
+      --text-muted: #6b7a58;
+      --white: #ffffff;
+      --border: rgba(74,124,32,0.15);
+    }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
-  html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--text);
-    overflow-x: hidden;
-  }
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 5%;
+      background: rgba(250,248,243,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
 
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1rem 5%;
-    background: rgba(250,248,243,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-logo {
-    display: flex; align-items: center; gap: 10px;
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem; font-weight: 700;
-    color: var(--green-dark);
-    text-decoration: none;
-  }
-  .nav-logo span { color: var(--amber); }
-  .nav-logo-icon {
-    width: 36px; height: 36px;
-    background: var(--green-dark);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-  }
-  .nav-links { display: flex; gap: 2rem; list-style: none; }
-  .nav-links a {
-    text-decoration: none; color: var(--text-mid);
-    font-size: 0.9rem; font-weight: 500;
-    transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--green-mid); }
-  .nav-cta {
-    display: flex; gap: 0.75rem;
-  }
-  .btn {
-    padding: 0.55rem 1.25rem;
-    border-radius: 50px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.875rem; font-weight: 600;
-    cursor: pointer; text-decoration: none;
-    transition: all 0.2s; border: 2px solid transparent;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  .btn-outline {
-    background: transparent;
-    border-color: var(--green-mid);
-    color: var(--green-mid);
-  }
-  .btn-outline:hover { background: var(--green-pale); }
-  .btn-green {
-    background: var(--green-dark);
-    color: var(--white);
-  }
-  .btn-green:hover { background: var(--green-mid); transform: translateY(-1px); }
-  .btn-amber {
-    background: var(--amber);
-    color: var(--white);
-  }
-  .btn-amber:hover { background: var(--amber-light); color: var(--text); transform: translateY(-1px); }
-  .btn-lg { padding: 0.875rem 2rem; font-size: 1rem; }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      text-decoration: none;
+    }
 
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex; align-items: center;
-    padding: 7rem 5% 4rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero-bg {
-    position: absolute; inset: 0; z-index: 0;
-    background:
-      radial-gradient(ellipse 60% 80% at 70% 50%, rgba(74,124,32,0.08) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(201,125,18,0.07) 0%, transparent 60%);
-  }
-  .hero-grid {
-    position: absolute; inset: 0; z-index: 0; opacity: 0.04;
-    background-image: linear-gradient(var(--green-mid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--green-mid) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-  .hero-content { position: relative; z-index: 1; max-width: 640px; }
-  .hero-tag {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--green-pale);
-    border: 1px solid rgba(74,124,32,0.25);
-    color: var(--green-dark);
-    padding: 0.4rem 1rem; border-radius: 50px;
-    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em;
-    text-transform: uppercase; margin-bottom: 1.5rem;
-  }
-  .hero-tag-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--green-light);
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(1.3); }
-  }
-  .hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.8rem, 5vw, 4.2rem);
-    font-weight: 900; line-height: 1.1;
-    color: var(--text); margin-bottom: 1.25rem;
-  }
-  .hero h1 em {
-    font-style: normal; color: var(--green-mid);
-    position: relative;
-  }
-  .hero h1 em::after {
-    content: '';
-    position: absolute; bottom: 2px; left: 0; right: 0; height: 3px;
-    background: var(--amber-light); border-radius: 2px;
-  }
-  .hero p {
-    font-size: 1.1rem; line-height: 1.7;
-    color: var(--text-muted); margin-bottom: 2rem; max-width: 520px;
-  }
-  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
-  .hero-stats {
-    display: flex; gap: 2rem; flex-wrap: wrap;
-    padding-top: 2rem; border-top: 1px solid var(--border);
-  }
-  .hero-stat strong {
-    display: block; font-size: 1.6rem; font-weight: 700;
-    color: var(--green-dark); font-family: 'Playfair Display', serif;
-  }
-  .hero-stat span { font-size: 0.8rem; color: var(--text-muted); }
-  .hero-visual {
-    position: absolute; right: 5%; top: 50%; transform: translateY(-50%);
-    z-index: 1; display: flex; gap: 1.5rem; align-items: flex-start;
-  }
-  .phone-mock {
-    width: 200px; background: var(--green-dark);
-    border-radius: 24px; overflow: hidden;
-    box-shadow: 0 24px 64px rgba(45,80,22,0.35);
-    transform: translateY(20px);
-  }
-  .phone-mock.float { transform: translateY(0); animation: float 4s ease-in-out infinite; }
-  .phone-mock.float2 { transform: translateY(30px); animation: float 4s ease-in-out infinite 0.8s; }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-  }
-  .phone-screen { padding: 1rem; }
-  .phone-header { font-size: 10px; color: rgba(255,255,255,0.6); margin-bottom: 0.5rem; }
-  .phone-title { font-size: 13px; color: white; font-weight: 600; margin-bottom: 0.75rem; }
-  .phone-card {
-    background: rgba(255,255,255,0.1); border-radius: 10px;
-    padding: 0.6rem; margin-bottom: 0.5rem;
-  }
-  .phone-card-name { font-size: 10px; color: white; font-weight: 600; }
-  .phone-card-sub { font-size: 9px; color: rgba(255,255,255,0.6); }
-  .phone-price {
-    background: var(--amber); color: white;
-    font-size: 9px; font-weight: 700;
-    padding: 2px 8px; border-radius: 50px; display: inline-block; margin-top: 4px;
-  }
-  .phone-btn {
-    display: block; text-align: center;
-    background: var(--amber); color: white;
-    font-size: 10px; font-weight: 700;
-    padding: 6px; border-radius: 8px; margin-top: 0.75rem;
-  }
-  .bid-badge {
-    background: rgba(110,168,50,0.3);
-    color: #a8e06a; font-size: 9px; font-weight: 600;
-    padding: 2px 8px; border-radius: 50px; display: inline-block;
-    margin-bottom: 4px;
-  }
+    .nav-logo span { color: var(--amber); }
 
-  /* SECTION COMMON */
-  section { padding: 6rem 5%; }
-  .section-tag {
-    display: inline-block;
-    background: var(--green-pale);
-    color: var(--green-dark);
-    font-size: 0.75rem; font-weight: 700;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    padding: 0.35rem 0.9rem; border-radius: 50px;
-    margin-bottom: 1rem;
-  }
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 3.5vw, 2.8rem);
-    font-weight: 700; line-height: 1.2;
-    margin-bottom: 1rem; color: var(--text);
-  }
-  .section-sub {
-    font-size: 1.05rem; color: var(--text-muted);
-    line-height: 1.7; max-width: 560px;
-  }
+    .nav-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--green-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
 
-  /* PROBLEM BAND */
-  .problem-band {
-    background: var(--green-dark);
-    padding: 5rem 5%;
-    color: white;
-  }
-  .problem-inner { max-width: 1200px; margin: 0 auto; }
-  .problem-band .section-tag { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8); }
-  .problem-band .section-title { color: white; }
-  .problem-band .section-sub { color: rgba(255,255,255,0.65); max-width: 600px; }
-  .problem-cards {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.5rem; margin-top: 3rem;
-  }
-  .problem-card {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 16px; padding: 1.5rem;
-  }
-  .problem-icon {
-    width: 44px; height: 44px; border-radius: 12px;
-    background: rgba(201,125,18,0.25);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px; margin-bottom: 1rem;
-  }
-  .problem-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: white; }
-  .problem-card p { font-size: 0.875rem; color: rgba(255,255,255,0.6); line-height: 1.6; }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
 
-  /* HOW IT WORKS */
-  .how { background: var(--cream); }
-  .how-inner { max-width: 1200px; margin: 0 auto; }
-  .how-header { margin-bottom: 4rem; }
-  .steps {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 2rem;
-  }
-  .step {
-    position: relative; padding: 2rem;
-    background: white; border-radius: 20px;
-    border: 1px solid var(--border);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .step:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(45,80,22,0.12); }
-  .step-num {
-    font-family: 'Playfair Display', serif;
-    font-size: 3rem; font-weight: 900; line-height: 1;
-    color: var(--green-pale); margin-bottom: 1rem;
-    -webkit-text-stroke: 2px var(--green-light);
-  }
-  .step-icon { font-size: 2rem; margin-bottom: 1rem; }
-  .step h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--green-dark); }
-  .step p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.65; }
-  .step-arrow {
-    display: none;
-  }
-  @media (min-width: 900px) {
-    .steps { grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; align-items: center; }
-    .step-arrow { display: flex; font-size: 1.5rem; color: var(--green-light); align-items: center; }
-  }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-mid);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
 
-  /* FEATURES */
-  .features { background: white; }
-  .features-inner { max-width: 1200px; margin: 0 auto; }
-  .features-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem; margin-top: 3rem;
-  }
-  .feature-card {
-    padding: 1.75rem; border-radius: 16px;
-    border: 1px solid var(--border); background: var(--cream);
-    transition: all 0.2s;
-  }
-  .feature-card:hover { border-color: var(--green-light); background: var(--green-pale); }
-  .feature-icon-wrap {
-    width: 52px; height: 52px; border-radius: 14px;
-    background: var(--green-dark);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; margin-bottom: 1.25rem;
-  }
-  .feature-card h3 { font-size: 1rem; font-weight: 600; color: var(--green-dark); margin-bottom: 0.5rem; }
-  .feature-card p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.65; }
+    .nav-links a:hover { color: var(--green-mid); }
 
-  /* MARKETPLACE */
-  .marketplace { background: var(--cream); }
-  .marketplace-inner { max-width: 1200px; margin: 0 auto; }
-  .market-header {
-    display: flex; justify-content: space-between; align-items: flex-end;
-    flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;
-  }
-  .filter-tabs {
-    display: flex; gap: 0.5rem; flex-wrap: wrap;
-  }
-  .filter-tab {
-    padding: 0.4rem 1rem; border-radius: 50px;
-    font-size: 0.85rem; font-weight: 500;
-    border: 1px solid var(--border); background: white; cursor: pointer;
-    transition: all 0.2s; color: var(--text-mid);
-  }
-  .filter-tab.active, .filter-tab:hover {
-    background: var(--green-dark); color: white; border-color: var(--green-dark);
-  }
-  .product-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1.5rem;
-  }
-  .product-card {
-    background: white; border-radius: 18px;
-    border: 1px solid var(--border); overflow: hidden;
-    transition: all 0.2s; cursor: pointer;
-  }
-  .product-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(45,80,22,0.12); }
-  .product-img {
-    height: 160px; background: var(--green-pale);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 4rem; position: relative;
-  }
-  .product-badge {
-    position: absolute; top: 10px; right: 10px;
-    padding: 4px 10px; border-radius: 50px;
-    font-size: 0.7rem; font-weight: 700;
-  }
-  .badge-bidding { background: var(--amber); color: white; }
-  .badge-fixed { background: var(--green-mid); color: white; }
-  .product-body { padding: 1.25rem; }
-  .product-name { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-  .product-loc { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.75rem; }
-  .product-footer { display: flex; justify-content: space-between; align-items: center; }
-  .product-price { font-size: 1.1rem; font-weight: 700; color: var(--green-dark); }
-  .product-qty { font-size: 0.78rem; color: var(--text-muted); }
-  .bid-btn {
-    padding: 0.4rem 1rem; background: var(--green-dark); color: white;
-    border: none; border-radius: 50px; font-size: 0.8rem;
-    font-weight: 600; cursor: pointer; transition: all 0.2s;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .bid-btn:hover { background: var(--green-mid); }
+    .nav-cta {
+      display: flex;
+      gap: 0.75rem;
+    }
 
-  /* BIDDING MODAL */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,0.5); align-items: center; justify-content: center;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: white; border-radius: 24px;
-    padding: 2rem; width: 90%; max-width: 440px;
-    max-height: 90vh; overflow-y: auto;
-    animation: slideUp 0.25s ease;
-  }
-  @keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-  .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-  .modal-head h2 { font-size: 1.2rem; font-weight: 700; color: var(--green-dark); }
-  .modal-close {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: var(--green-pale); border: none; cursor: pointer;
-    font-size: 1rem; display: flex; align-items: center; justify-content: center;
-  }
-  .modal-product-info {
-    background: var(--cream); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;
-  }
-  .modal-product-info .product-name { font-size: 1.1rem; }
-  .bid-history h3 { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
-  .bid-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 0.6rem 0; border-bottom: 1px solid var(--border);
-    font-size: 0.9rem;
-  }
-  .bid-row:last-child { border-bottom: none; }
-  .bid-row .bidder { font-weight: 500; color: var(--text); }
-  .bid-row .bid-amount { font-weight: 700; color: var(--green-dark); }
-  .bid-row .bid-time { font-size: 0.75rem; color: var(--text-muted); }
-  .bid-input-row { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
-  .bid-input-row input {
-    flex: 1; padding: 0.75rem 1rem; border: 1.5px solid var(--border);
-    border-radius: 12px; font-size: 1rem; font-family: 'DM Sans', sans-serif;
-    outline: none; color: var(--text);
-  }
-  .bid-input-row input:focus { border-color: var(--green-mid); }
+    .btn {
+      padding: 0.55rem 1.25rem;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-  /* USERS */
-  .users { background: white; }
-  .users-inner { max-width: 1200px; margin: 0 auto; }
-  .user-split {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem;
-  }
-  @media (max-width: 768px) { .user-split { grid-template-columns: 1fr; } }
-  .user-panel {
-    border-radius: 20px; padding: 2.5rem; position: relative; overflow: hidden;
-  }
-  .user-panel.farmer { background: var(--green-dark); color: white; }
-  .user-panel.buyer { background: var(--amber-pale); border: 1px solid rgba(201,125,18,0.2); }
-  .user-panel h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; }
-  .user-panel.buyer h3 { color: var(--green-dark); }
-  .user-panel p { font-size: 0.9rem; line-height: 1.65; opacity: 0.8; margin-bottom: 1.5rem; }
-  .user-panel.buyer p { color: var(--text-mid); }
-  .user-list { list-style: none; }
-  .user-list li {
-    display: flex; align-items: flex-start; gap: 10px;
-    font-size: 0.875rem; margin-bottom: 0.75rem; line-height: 1.5;
-  }
-  .user-panel.farmer .user-list li { color: rgba(255,255,255,0.8); }
-  .user-panel.buyer .user-list li { color: var(--text-mid); }
-  .user-check {
-    min-width: 20px; height: 20px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 10px; font-weight: 700;
-  }
-  .farmer .user-check { background: rgba(255,255,255,0.2); color: white; }
-  .buyer .user-check { background: var(--amber); color: white; }
-  .panel-emoji { font-size: 4rem; position: absolute; right: 2rem; top: 2rem; opacity: 0.2; }
+    .btn-outline {
+      background: transparent;
+      border-color: var(--green-mid);
+      color: var(--green-mid);
+    }
 
-  /* TESTIMONIAL */
-  .story { background: var(--green-pale); }
-  .story-inner { max-width: 800px; margin: 0 auto; text-align: center; }
-  .story-quote {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.4rem, 2.5vw, 2rem);
-    font-weight: 700; line-height: 1.5;
-    color: var(--green-dark); margin: 2rem 0;
-  }
-  .story-author {
-    display: flex; align-items: center; gap: 1rem; justify-content: center;
-    margin-top: 1.5rem;
-  }
-  .author-avatar {
-    width: 48px; height: 48px; border-radius: 50%;
-    background: var(--green-mid); display: flex; align-items: center;
-    justify-content: center; font-size: 1.5rem;
-  }
-  .author-name { font-weight: 600; font-size: 0.95rem; color: var(--text); }
-  .author-role { font-size: 0.8rem; color: var(--text-muted); }
+    .btn-outline:hover { background: var(--green-pale); }
 
-  /* FOOTER */
-  footer {
-    background: var(--green-dark); color: white; padding: 4rem 5% 2rem;
-  }
-  .footer-top {
-    display: grid; grid-template-columns: 2fr 1fr 1fr;
-    gap: 3rem; margin-bottom: 3rem;
-  }
-  @media (max-width: 768px) { .footer-top { grid-template-columns: 1fr; } }
-  .footer-brand .nav-logo { color: white; margin-bottom: 1rem; }
-  .footer-brand p { font-size: 0.875rem; color: rgba(255,255,255,0.55); line-height: 1.65; max-width: 300px; }
-  .footer-col h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; color: rgba(255,255,255,0.9); }
-  .footer-col ul { list-style: none; }
-  .footer-col ul li { margin-bottom: 0.6rem; }
-  .footer-col ul li a { text-decoration: none; font-size: 0.85rem; color: rgba(255,255,255,0.5); transition: color 0.2s; }
-  .footer-col ul li a:hover { color: var(--amber-light); }
-  .footer-bottom {
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 1.5rem;
-    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
-    font-size: 0.8rem; color: rgba(255,255,255,0.4);
-  }
+    .btn-green {
+      background: var(--green-dark);
+      color: var(--white);
+    }
 
-  /* MOBILE */
-  @media (max-width: 900px) {
-    .hero-visual { display: none; }
-    .nav-links { display: none; }
-  }
-  @media (max-width: 600px) {
-    .hero { padding: 6rem 5% 3rem; }
-    .hero-stats { gap: 1rem; }
-    section { padding: 4rem 5%; }
-  }
+    .btn-green:hover {
+      background: var(--green-mid);
+      transform: translateY(-1px);
+    }
 
-  /* SCROLL ANIMATION */
-  .reveal {
-    opacity: 0; transform: translateY(24px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-</style>
+    .btn-amber {
+      background: var(--amber);
+      color: var(--white);
+    }
+
+    .btn-amber:hover {
+      background: var(--amber-light);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .btn-lg {
+      padding: 0.875rem 2rem;
+      font-size: 1rem;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 7rem 5% 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 70% 50%, rgba(74,124,32,0.08) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(201,125,18,0.07) 0%, transparent 60%);
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.04;
+      background-image:
+        linear-gradient(var(--green-mid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--green-mid) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 640px;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--green-pale);
+      border: 1px solid rgba(74,124,32,0.25);
+      color: var(--green-dark);
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-tag-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green-light);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 5vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--green-mid);
+      position: relative;
+    }
+
+    .hero h1 em::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--amber-light);
+      border-radius: 2px;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      max-width: 520px;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .hero-stat strong {
+      display: block;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      font-family: 'Playfair Display', serif;
+    }
+
+    .hero-stat span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .hero-visual {
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+    }
+
+    .phone-mock {
+      width: 200px;
+      background: var(--green-dark);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(45,80,22,0.35);
+      transform: translateY(20px);
+    }
+
+    .phone-mock.float {
+      transform: translateY(0);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .phone-mock.float2 {
+      transform: translateY(30px);
+      animation: float 4s ease-in-out infinite 0.8s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .phone-screen { padding: 1rem; }
+    .phone-header { font-size: 10px; color: rgba(255,255,255,0.6); margin-bottom: 0.5rem; }
+    .phone-title { font-size: 13px; color: white; font-weight: 600; margin-bottom: 0.75rem; }
+
+    .phone-card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .phone-card-name { font-size: 10px; color: white; font-weight: 600; }
+    .phone-card-sub { font-size: 9px; color: rgba(255,255,255,0.6); }
+
+    .phone-price {
+      background: var(--amber);
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 50px;
+      display: inline-block;
+      margin-top: 4px;
+    }
+
+    .phone-btn {
+      display: block;
+      text-align: center;
+      background: var(--amber);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 6px;
+      border-radius: 8px;
+      margin-top: 0.75rem;
+    }
+
+    .bid-badge {
+      background: rgba(110,168,50,0.3);
+      color: #a8e06a;
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 50px;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    section { padding: 6rem 5%; }
+
+    .section-tag {
+      display: inline-block;
+      background: var(--green-pale);
+      color: var(--green-dark);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.9rem;
+      border-radius: 50px;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 560px;
+    }
+
+    .problem-band {
+      background: var(--green-dark);
+      padding: 5rem 5%;
+      color: white;
+    }
+
+    .problem-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .problem-band .section-tag {
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.8);
+    }
+
+    .problem-band .section-title { color: white; }
+    .problem-band .section-sub { color: rgba(255,255,255,0.65); max-width: 600px; }
+
+    .problem-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .problem-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    .problem-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(201,125,18,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 1rem;
+    }
+
+    .problem-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: white;
+    }
+
+    .problem-card p {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+    }
+
+    .how { background: var(--cream); }
+    .how-inner,
+    .features-inner,
+    .marketplace-inner,
+    .users-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .how-header { margin-bottom: 4rem; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+    }
+
+    .step {
+      position: relative;
+      padding: 2rem;
+      background: white;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .step:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(45,80,22,0.12);
+    }
+
+    .step-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      line-height: 1;
+      color: var(--green-pale);
+      margin-bottom: 1rem;
+      -webkit-text-stroke: 2px var(--green-light);
+    }
+
+    .step-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .step h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--green-dark);
+    }
+
+    .step p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .step-arrow { display: none; }
+
+    @media (min-width: 900px) {
+      .steps {
+        grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+        align-items: center;
+      }
+
+      .step-arrow {
+        display: flex;
+        font-size: 1.5rem;
+        color: var(--green-light);
+        align-items: center;
+      }
+    }
+
+    .features { background: white; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      padding: 1.75rem;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--cream);
+      transition: all 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--green-light);
+      background: var(--green-pale);
+    }
+
+    .feature-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: var(--green-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 1.25rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--green-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-card p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .marketplace { background: var(--cream); }
+
+    .market-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-tab {
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-mid);
+    }
+
+    .filter-tab.active,
+    .filter-tab:hover {
+      background: var(--green-dark);
+      color: white;
+      border-color: var(--green-dark);
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(45,80,22,0.12);
+    }
+
+    .product-img {
+      height: 160px;
+      background: var(--green-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      position: relative;
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 4px 10px;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .badge-bidding { background: var(--amber); color: white; }
+    .badge-fixed { background: var(--green-mid); color: white; }
+
+    .product-body { padding: 1.25rem; }
+
+    .product-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .product-loc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .product-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .product-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .product-qty {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .bid-btn {
+      padding: 0.4rem 1rem;
+      background: var(--green-dark);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .bid-btn:hover { background: var(--green-mid); }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 440px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.25s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-head h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--green-pale);
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-product-info {
+      background: var(--cream);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-product-info .product-name { font-size: 1.1rem; }
+
+    .bid-history h3 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .bid-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    .bid-row:last-child { border-bottom: none; }
+    .bid-row .bidder { font-weight: 500; color: var(--text); }
+    .bid-row .bid-amount { font-weight: 700; color: var(--green-dark); }
+    .bid-row .bid-time { font-size: 0.75rem; color: var(--text-muted); }
+
+    .bid-input-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .bid-input-row input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      color: var(--text);
+    }
+
+    .bid-input-row input:focus { border-color: var(--green-mid); }
+
+    .users { background: white; }
+
+    .user-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 768px) {
+      .user-split { grid-template-columns: 1fr; }
+    }
+
+    .user-panel {
+      border-radius: 20px;
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .user-panel.farmer {
+      background: var(--green-dark);
+      color: white;
+    }
+
+    .user-panel.buyer {
+      background: var(--amber-pale);
+      border: 1px solid rgba(201,125,18,0.2);
+    }
+
+    .user-panel h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .user-panel.buyer h3 { color: var(--green-dark); }
+
+    .user-panel p {
+      font-size: 0.9rem;
+      line-height: 1.65;
+      opacity: 0.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .user-panel.buyer p { color: var(--text-mid); }
+
+    .user-list { list-style: none; }
+
+    .user-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .user-panel.farmer .user-list li { color: rgba(255,255,255,0.8); }
+    .user-panel.buyer .user-list li { color: var(--text-mid); }
+
+    .user-check {
+      min-width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .farmer .user-check { background: rgba(255,255,255,0.2); color: white; }
+    .buyer .user-check { background: var(--amber); color: white; }
+
+    .panel-emoji {
+      font-size: 4rem;
+      position: absolute;
+      right: 2rem;
+      top: 2rem;
+      opacity: 0.2;
+    }
+
+    .story { background: var(--green-pale); }
+
+    .story-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .story-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 700;
+      line-height: 1.5;
+      color: var(--green-dark);
+      margin: 2rem 0;
+    }
+
+    .story-author {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .author-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--green-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .author-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .author-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    footer {
+      background: var(--green-dark);
+      color: white;
+      padding: 4rem 5% 2rem;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    @media (max-width: 768px) {
+      .footer-top { grid-template-columns: 1fr; }
+    }
+
+    .footer-brand .nav-logo {
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .footer-brand p {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.65;
+      max-width: 300px;
+    }
+
+    .footer-col h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 0.6rem; }
+
+    .footer-col ul li a {
+      text-decoration: none;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      transition: color 0.2s;
+    }
+
+    .footer-col ul li a:hover { color: var(--amber-light); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+    }
+
+    @media (max-width: 900px) {
+      .hero-visual { display: none; }
+      .nav-links { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 6rem 5% 3rem; }
+      .hero-stats { gap: 1rem; }
+      section { padding: 4rem 5%; }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <a href="#" class="nav-logo">
-    <div class="nav-logo-icon">🌾</div>
-    Agri<span>Link</span>
-  </a>
-  <ul class="nav-links">
-    <li><a href="#how">How It Works</a></li>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#marketplace">Marketplace</a></li>
-    <li><a href="#users">For You</a></li>
-  </ul>
-  <div class="nav-cta">
-    <a href="#marketplace" class="btn btn-outline">Browse Crops</a>
-    <a href="#users" class="btn btn-green">Get Started</a>
-  </div>
-</nav>
+  <nav>
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">🌾</div>
+      Agri<span>Link</span>
+    </a>
 
-<!-- HERO -->
-<section class="hero" id="home">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-content">
-    <div class="hero-tag">
-      <span class="hero-tag-dot"></span>
-      Now live in the Philippines
-    </div>
-    <h1>Harvest more. <em>Earn more.</em> Together.</h1>
-    <p>AgriLink connects Filipino farmers directly to buyers through transparent bidding, secure payments, and coordinated delivery — cutting out the middleman for good.</p>
-    <div class="hero-btns">
-      <a href="#users" class="btn btn-green btn-lg">I'm a Farmer →</a>
-      <a href="#marketplace" class="btn btn-amber btn-lg">I'm a Buyer →</a>
-    </div>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <strong>Direct</strong>
-        <span>Farm-to-buyer sales</span>
-      </div>
-      <div class="hero-stat">
-        <strong>Escrow</strong>
-        <span>Secure payments</span>
-      </div>
-      <div class="hero-stat">
-        <strong>Fair</strong>
-        <span>Competitive bidding</span>
-      </div>
-    </div>
-  </div>
+    <ul class="nav-links">
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#marketplace">Marketplace</a></li>
+      <li><a href="#users">For You</a></li>
+    </ul>
 
-  <!-- Phone mockups -->
-  <div class="hero-visual">
-    <div class="phone-mock float">
-      <div style="background: var(--amber); height: 6px; border-radius: 0;"></div>
-      <div class="phone-screen">
-        <div class="phone-header">MARKETPLACE</div>
-        <div class="phone-title">Fresh Harvests</div>
-        <div class="phone-card">
-          <div class="bid-badge">🔴 LIVE BIDDING</div>
-          <div class="phone-card-name">Jasmine Rice</div>
-          <div class="phone-card-sub">Nueva Ecija · 100 sacks</div>
-          <div class="phone-price">₱1,350 / sack</div>
+    <div class="nav-cta">
+      <a href="buyer-marketplace.html" class="btn btn-outline">Browse Crops</a>
+      <a href="auth.html" class="btn btn-green">Get Started</a>
+    </div>
+  </nav>
+
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+
+    <div class="hero-content">
+      <div class="hero-tag">
+        <span class="hero-tag-dot"></span>
+        Now live in the Philippines
+      </div>
+
+      <h1>Harvest more. <em>Earn more.</em> Together.</h1>
+
+      <p>
+        AgriLink connects Filipino farmers directly to buyers through transparent bidding,
+        secure payments, and coordinated delivery — cutting out the middleman for good.
+      </p>
+
+      <div class="hero-btns">
+        <a href="farmer-dashboard.html" class="btn btn-green btn-lg">I'm a Farmer →</a>
+        <a href="buyer-marketplace.html" class="btn btn-amber btn-lg">I'm a Buyer →</a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <strong>Direct</strong>
+          <span>Farm-to-buyer sales</span>
         </div>
-        <div class="phone-card">
-          <div class="phone-card-name">Indian Mangoes</div>
-          <div class="phone-card-sub">San Miguel, Bulacan · 50 kg</div>
-          <div class="phone-price">₱78 / kg</div>
+        <div class="hero-stat">
+          <strong>Escrow</strong>
+          <span>Secure payments</span>
         </div>
-        <div class="phone-btn">Browse All →</div>
-      </div>
-    </div>
-    <div class="phone-mock float2" style="margin-top: 2rem; background: #1a3a0a;">
-      <div style="background: var(--green-mid); height: 6px;"></div>
-      <div class="phone-screen">
-        <div class="phone-header">FARMER DASHBOARD</div>
-        <div class="phone-title">Welcome, Carlos!</div>
-        <div class="phone-card" style="background: rgba(255,255,255,0.08);">
-          <div class="phone-card-sub">Current bid on Jasmine Rice</div>
-          <div style="font-size: 16px; color: var(--amber-light); font-weight: 700; margin: 4px 0;">₱ 40,500</div>
-          <div class="phone-card-sub">Rachel Cruz · 20 sacks</div>
+        <div class="hero-stat">
+          <strong>Fair</strong>
+          <span>Competitive bidding</span>
         </div>
-        <div class="phone-btn" style="background: var(--amber);">Accept Bid ✓</div>
       </div>
     </div>
-  </div>
-</section>
 
-<!-- PROBLEM -->
-<div class="problem-band" id="problem">
-  <div class="problem-inner">
-    <div class="reveal">
-      <span class="section-tag">The Problem</span>
-      <h2 class="section-title">Filipino farmers deserve better</h2>
-      <p class="section-sub">Despite being the backbone of food production, smallholder farmers are trapped in a system that keeps prices low and control out of their hands.</p>
-    </div>
-    <div class="problem-cards reveal">
-      <div class="problem-card">
-        <div class="problem-icon">🔗</div>
-        <h3>Middleman dependency</h3>
-        <p>Farmers have no choice but to sell to traders who set unfair prices, especially during calamities when crops risk spoiling.</p>
-      </div>
-      <div class="problem-card">
-        <div class="problem-icon">📉</div>
-        <h3>No price transparency</h3>
-        <p>Without market data, farmers accept whatever offer comes first — often far below what buyers actually pay downstream.</p>
-      </div>
-      <div class="problem-card">
-        <div class="problem-icon">🚚</div>
-        <h3>Logistics burden</h3>
-        <p>Finding transport, coordinating delivery, and managing payments falls entirely on the farmer with no support.</p>
-      </div>
-      <div class="problem-card">
-        <div class="problem-icon">💸</div>
-        <h3>Delayed or unfair payment</h3>
-        <p>Cash-on-delivery arrangements leave farmers vulnerable to non-payment, especially for large orders.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- HOW IT WORKS -->
-<section class="how" id="how">
-  <div class="how-inner">
-    <div class="how-header reveal">
-      <span class="section-tag">How It Works</span>
-      <h2 class="section-title">From farm to buyer in 4 steps</h2>
-      <p class="section-sub">AgriLink handles the entire selling process so farmers focus on growing, not negotiating.</p>
-    </div>
-    <div class="steps">
-      <div class="step reveal">
-        <div class="step-num">01</div>
-        <div class="step-icon">📋</div>
-        <h3>List your harvest</h3>
-        <p>Farmers upload product details, quantity, location, and a starting price in just a few taps.</p>
-      </div>
-      <div class="step-arrow reveal">→</div>
-      <div class="step reveal">
-        <div class="step-num">02</div>
-        <div class="step-icon">⚡</div>
-        <h3>Buyers bid competitively</h3>
-        <p>Multiple verified buyers compete in real-time, driving prices up rather than down.</p>
-      </div>
-      <div class="step-arrow reveal">→</div>
-      <div class="step reveal">
-        <div class="step-num">03</div>
-        <div class="step-icon">🔒</div>
-        <h3>Escrow secures payment</h3>
-        <p>Funds are held safely in escrow and released to the farmer only upon delivery confirmation.</p>
-      </div>
-      <div class="step-arrow reveal">→</div>
-      <div class="step reveal">
-        <div class="step-num">04</div>
-        <div class="step-icon">🚛</div>
-        <h3>Coordinated delivery</h3>
-        <p>AgriLink's logistics partners handle transport so both sides get updates in real time.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section class="features" id="features">
-  <div class="features-inner">
-    <div class="reveal">
-      <span class="section-tag">Features</span>
-      <h2 class="section-title">Everything in one platform</h2>
-    </div>
-    <div class="features-grid">
-      <div class="feature-card reveal">
-        <div class="feature-icon-wrap">📦</div>
-        <h3>Product Listing System</h3>
-        <p>Create detailed harvest listings with photos, quantities, location, and a starting price. Go live in minutes.</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon-wrap">🏷️</div>
-        <h3>Live Bidding Engine</h3>
-        <p>Real-time competitive bidding from verified buyers. Farmers choose the best offer — never the only offer.</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon-wrap">🔐</div>
-        <h3>Escrow Payments</h3>
-        <p>Buyer funds are locked before delivery. Farmers receive payment automatically once the buyer confirms receipt.</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon-wrap">🚚</div>
-        <h3>Logistics Coordination</h3>
-        <p>Partner couriers and real-time order tracking — no more chasing down drivers or arranging transport yourself.</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon-wrap">🤝</div>
-        <h3>Harvest Pooling</h3>
-        <p>Small farmers can combine harvests to meet bulk buyer demand and access better prices together.</p>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon-wrap">✅</div>
-        <h3>Buyer Verification</h3>
-        <p>All buyers are vetted before accessing the platform, protecting farmers from fraudulent deals.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- MARKETPLACE PREVIEW -->
-<section class="marketplace" id="marketplace">
-  <div class="marketplace-inner">
-    <div class="market-header reveal">
-      <div>
-        <span class="section-tag">Marketplace</span>
-        <h2 class="section-title">Browse fresh harvests</h2>
-      </div>
-      <div class="filter-tabs">
-        <button class="filter-tab active" onclick="filterProducts('all', this)">All</button>
-        <button class="filter-tab" onclick="filterProducts('rice', this)">Rice</button>
-        <button class="filter-tab" onclick="filterProducts('vegetable', this)">Vegetables</button>
-        <button class="filter-tab" onclick="filterProducts('fruit', this)">Fruits</button>
-      </div>
-    </div>
-    <div class="product-grid" id="product-grid">
-      <!-- Injected by JS -->
-    </div>
-  </div>
-</section>
-
-<!-- BIDDING MODAL -->
-<div class="modal-overlay" id="bid-modal">
-  <div class="modal">
-    <div class="modal-head">
-      <h2>Place a Bid</h2>
-      <button class="modal-close" onclick="closeBidModal()">✕</button>
-    </div>
-    <div class="modal-product-info" id="modal-product-info"></div>
-    <div class="bid-history">
-      <h3>Current Bids</h3>
-      <div id="bid-list"></div>
-    </div>
-    <div class="bid-input-row">
-      <input type="number" id="bid-amount" placeholder="Your bid (₱)" min="0" />
-      <button class="btn btn-green" onclick="placeBid()" style="border-radius:12px; padding: 0.75rem 1.25rem;">Bid</button>
-    </div>
-    <p id="bid-msg" style="font-size: 0.8rem; color: var(--green-mid); margin-top: 0.75rem; min-height: 1.2em;"></p>
-  </div>
-</div>
-
-<!-- FOR YOU -->
-<section class="users" id="users">
-  <div class="users-inner">
-    <div class="reveal" style="text-align: center; margin-bottom: 1rem;">
-      <span class="section-tag">Who is AgriLink for?</span>
-      <h2 class="section-title">Built for both sides of the harvest</h2>
-    </div>
-    <div class="user-split">
-      <div class="user-panel farmer reveal">
-        <div class="panel-emoji">🌾</div>
-        <h3>For Farmers</h3>
-        <p>Stop depending on middlemen. Get your harvest in front of dozens of buyers and earn what your crops are worth.</p>
-        <ul class="user-list">
-          <li><span class="user-check">✓</span> List products in minutes with photos and pricing</li>
-          <li><span class="user-check">✓</span> Receive competing bids from verified buyers</li>
-          <li><span class="user-check">✓</span> Guaranteed payment via escrow before delivery</li>
-          <li><span class="user-check">✓</span> Logistics handled — no need to arrange transport</li>
-          <li><span class="user-check">✓</span> Pool harvests with other farmers for bulk deals</li>
-        </ul>
-        <a href="#" class="btn btn-amber btn-lg" style="margin-top: 1.5rem;">Sign up as Farmer →</a>
-      </div>
-      <div class="user-panel buyer reveal">
-        <div class="panel-emoji">🛒</div>
-        <h3>For Buyers</h3>
-        <p>Source directly from farms. Restaurants, retailers, and distributors get fresh produce at transparent prices.</p>
-        <ul class="user-list">
-          <li><span class="user-check">✓</span> Browse categorized, fresh-listed produce</li>
-          <li><span class="user-check">✓</span> Bid competitively or purchase at fixed prices</li>
-          <li><span class="user-check">✓</span> Verified harvest quality and delivery dates</li>
-          <li><span class="user-check">✓</span> Direct access to smallholder farmers</li>
-          <li><span class="user-check">✓</span> Reliable delivery coordination built in</li>
-        </ul>
-        <a href="#" class="btn btn-green btn-lg" style="margin-top: 1.5rem;">Sign up as Buyer →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- STORY -->
-<section class="story">
-  <div class="story-inner reveal">
-    <span class="section-tag">A Farmer's Story</span>
-    <p class="story-quote">"Before, I had no choice but to accept whatever the trader offered. With AgriLink, three buyers competed for my rice — and I earned 40% more that season."</p>
-    <div class="story-author">
-      <div class="author-avatar">👨‍🌾</div>
-      <div>
-        <div class="author-name">Carlo Reyes</div>
-        <div class="author-role">Rice Farmer, Nueva Ecija</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-top">
-    <div class="footer-brand">
-      <a href="#" class="nav-logo">
-        <div class="nav-logo-icon">🌾</div>
-        Agri<span>Link</span>
-      </a>
-      <p style="margin-top: 1rem;">A digital market infrastructure for Filipino farmers. Bridging the gap between harvest and fair income.</p>
-    </div>
-    <div class="footer-col">
-      <h4>Platform</h4>
-      <ul>
-        <li><a href="#how">How It Works</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#marketplace">Marketplace</a></li>
-        <li><a href="#">Pricing</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Company</h4>
-      <ul>
-        <li><a href="#">About Us</a></li>
-        <li><a href="#">Impact</a></li>
-        <li><a href="#">Contact</a></li>
-        <li><a href="#">Privacy</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© 2025 AgriLink. All rights reserved.</span>
-    <span>Made for Filipino farmers 🇵🇭</span>
-  </div>
-</footer>
-
-<script>
-const products = [
-  { id: 1, name: 'Jasmine Rice', location: 'Nueva Ecija', qty: '100 sacks', price: '₱1,350/sack', emoji: '🌾', type: 'rice', bidding: true, startBid: 40500,
-    bids: [{name: 'Rachel Cruz', amount: 40500, time: '10 min ago'}, {name: 'Juan Santos', amount: 38000, time: '25 min ago'}] },
-  { id: 2, name: 'Indian Mangoes', location: 'San Miguel, Bulacan', qty: '50 kg', price: '₱78/kg', emoji: '🥭', type: 'fruit', bidding: true, startBid: 3900,
-    bids: [{name: 'Mary Lim', amount: 4200, time: '5 min ago'}, {name: 'Felix Go', amount: 3900, time: '30 min ago'}] },
-  { id: 3, name: 'Pechay (Bok Choy)', location: 'Bay, Laguna', qty: '30 kg', price: '₱45/kg', emoji: '🥬', type: 'vegetable', bidding: false, startBid: 1350,
-    bids: [{name: 'Tita Reyes', amount: 1350, time: '1 hr ago'}] },
-  { id: 4, name: 'Carrots', location: 'La Trinidad, Benguet', qty: '35 kg', price: '₱55/kg', emoji: '🥕', type: 'vegetable', bidding: true, startBid: 1925,
-    bids: [{name: 'Globe Mart', amount: 2100, time: '15 min ago'}, {name: 'FreshBox PH', amount: 1925, time: '45 min ago'}] },
-  { id: 5, name: 'Saba Banana', location: 'San Miguel, Bulacan', qty: '200 pcs', price: '₱8,200 total', emoji: '🍌', type: 'fruit', bidding: true, startBid: 8200,
-    bids: [{name: 'Rico Dela Cruz', amount: 8200, time: '2 min ago'}] },
-  { id: 6, name: 'Sweet Potato', location: 'Ilocos Norte', qty: '80 kg', price: '₱35/kg', emoji: '🍠', type: 'vegetable', bidding: false, startBid: 2800,
-    bids: [{name: 'Provincial Market', amount: 2800, time: '2 hrs ago'}] },
-];
-
-let activeFilter = 'all';
-let activeProduct = null;
-
-function renderProducts(filter) {
-  const grid = document.getElementById('product-grid');
-  const filtered = filter === 'all' ? products : products.filter(p => p.type === filter);
-  grid.innerHTML = filtered.map(p => `
-    <div class="product-card" onclick="openBidModal(${p.id})">
-      <div class="product-img">
-        <span style="font-size: 3.5rem;">${p.emoji}</span>
-        <span class="product-badge ${p.bidding ? 'badge-bidding' : 'badge-fixed'}">
-          ${p.bidding ? '🔴 Bidding' : '✅ Fixed Price'}
-        </span>
-      </div>
-      <div class="product-body">
-        <div class="product-name">${p.name}</div>
-        <div class="product-loc">📍 ${p.location}</div>
-        <div class="product-footer">
-          <div>
-            <div class="product-price">${p.price}</div>
-            <div class="product-qty">${p.qty}</div>
+    <div class="hero-visual">
+      <div class="phone-mock float">
+        <div style="background: var(--amber); height: 6px; border-radius: 0;"></div>
+        <div class="phone-screen">
+          <div class="phone-header">MARKETPLACE</div>
+          <div class="phone-title">Fresh Harvests</div>
+          <div class="phone-card">
+            <div class="bid-badge">🔴 LIVE BIDDING</div>
+            <div class="phone-card-name">Jasmine Rice</div>
+            <div class="phone-card-sub">Nueva Ecija · 100 sacks</div>
+            <div class="phone-price">₱1,350 / sack</div>
           </div>
-          <button class="bid-btn">${p.bidding ? 'Bid Now' : 'Buy Now'}</button>
+          <div class="phone-card">
+            <div class="phone-card-name">Indian Mangoes</div>
+            <div class="phone-card-sub">San Miguel, Bulacan · 50 kg</div>
+            <div class="phone-price">₱78 / kg</div>
+          </div>
+          <div class="phone-btn">Browse All →</div>
+        </div>
+      </div>
+
+      <div class="phone-mock float2" style="margin-top: 2rem; background: #1a3a0a;">
+        <div style="background: var(--green-mid); height: 6px;"></div>
+        <div class="phone-screen">
+          <div class="phone-header">FARMER DASHBOARD</div>
+          <div class="phone-title">Welcome, Carlos!</div>
+          <div class="phone-card" style="background: rgba(255,255,255,0.08);">
+            <div class="phone-card-sub">Current bid on Jasmine Rice</div>
+            <div style="font-size: 16px; color: var(--amber-light); font-weight: 700; margin: 4px 0;">₱ 40,500</div>
+            <div class="phone-card-sub">Rachel Cruz · 20 sacks</div>
+          </div>
+          <div class="phone-btn" style="background: var(--amber);">Accept Bid ✓</div>
         </div>
       </div>
     </div>
-  `).join('');
-}
+  </section>
 
-function filterProducts(type, el) {
-  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  activeFilter = type;
-  renderProducts(type);
-}
-
-function openBidModal(id) {
-  activeProduct = products.find(p => p.id === id);
-  const info = document.getElementById('modal-product-info');
-  info.innerHTML = `
-    <div style="display:flex; align-items:center; gap:12px;">
-      <span style="font-size: 2.5rem;">${activeProduct.emoji}</span>
-      <div>
-        <div class="product-name">${activeProduct.name}</div>
-        <div class="product-loc" style="font-size:0.82rem;color:var(--text-muted);">📍 ${activeProduct.location} · ${activeProduct.qty}</div>
-        <div style="font-size:1rem;font-weight:700;color:var(--green-dark);margin-top:4px;">${activeProduct.price}</div>
+  <div class="problem-band" id="problem">
+    <div class="problem-inner">
+      <div class="reveal">
+        <span class="section-tag">The Problem</span>
+        <h2 class="section-title">Filipino farmers deserve better</h2>
+        <p class="section-sub">
+          Despite being the backbone of food production, smallholder farmers are trapped in a system
+          that keeps prices low and control out of their hands.
+        </p>
       </div>
-    </div>`;
-  renderBids();
-  document.getElementById('bid-amount').value = '';
-  document.getElementById('bid-msg').textContent = '';
-  document.getElementById('bid-modal').classList.add('open');
-}
 
-function renderBids() {
-  const list = document.getElementById('bid-list');
-  list.innerHTML = activeProduct.bids.map((b, i) => `
-    <div class="bid-row" style="${i===0 ? 'background:var(--green-pale);border-radius:8px;padding:0.6rem 0.5rem;' : ''}">
-      <span class="bidder">${i===0 ? '🥇 ' : ''}${b.name}</span>
-      <span class="bid-amount">₱${b.amount.toLocaleString()}</span>
-      <span class="bid-time">${b.time}</span>
-    </div>`).join('');
-}
+      <div class="problem-cards reveal">
+        <div class="problem-card">
+          <div class="problem-icon">🔗</div>
+          <h3>Middleman dependency</h3>
+          <p>Farmers have no choice but to sell to traders who set unfair prices, especially during calamities when crops risk spoiling.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">📉</div>
+          <h3>No price transparency</h3>
+          <p>Without market data, farmers accept whatever offer comes first — often far below what buyers actually pay downstream.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">🚚</div>
+          <h3>Logistics burden</h3>
+          <p>Finding transport, coordinating delivery, and managing payments falls entirely on the farmer with no support.</p>
+        </div>
+        <div class="problem-card">
+          <div class="problem-icon">💸</div>
+          <h3>Delayed or unfair payment</h3>
+          <p>Cash-on-delivery arrangements leave farmers vulnerable to non-payment, especially for large orders.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-function placeBid() {
-  const val = parseFloat(document.getElementById('bid-amount').value);
-  const msg = document.getElementById('bid-msg');
-  const topBid = activeProduct.bids[0].amount;
-  if (!val || isNaN(val)) { msg.textContent = 'Please enter a bid amount.'; msg.style.color = '#c00'; return; }
-  if (val <= topBid) { msg.textContent = `Bid must exceed the current top bid of ₱${topBid.toLocaleString()}.`; msg.style.color = '#c00'; return; }
-  activeProduct.bids.unshift({ name: 'You', amount: val, time: 'Just now' });
-  renderBids();
-  msg.style.color = 'var(--green-mid)';
-  msg.textContent = `✅ Bid of ₱${val.toLocaleString()} placed successfully!`;
-  document.getElementById('bid-amount').value = '';
-  renderProducts(activeFilter);
-}
-<div class="hero-btns">
-  <a href="farmer-dashboard.html" class="btn btn-green btn-lg">I'm a Farmer →</a>
-  <a href="buyer-marketplace.html" class="btn btn-amber btn-lg">I'm a Buyer →</a>
-</div>
-function closeBidModal() {
-  document.getElementById('bid-modal').classList.remove('open');
-}
+  <section class="how" id="how">
+    <div class="how-inner">
+      <div class="how-header reveal">
+        <span class="section-tag">How It Works</span>
+        <h2 class="section-title">From farm to buyer in 4 steps</h2>
+        <p class="section-sub">AgriLink handles the entire selling process so farmers focus on growing, not negotiating.</p>
+      </div>
 
-document.getElementById('bid-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeBidModal();
-});
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-num">01</div>
+          <div class="step-icon">📋</div>
+          <h3>List your harvest</h3>
+          <p>Farmers upload product details, quantity, location, and a starting price in just a few taps.</p>
+        </div>
+        <div class="step-arrow reveal">→</div>
+        <div class="step reveal">
+          <div class="step-num">02</div>
+          <div class="step-icon">⚡</div>
+          <h3>Buyers bid competitively</h3>
+          <p>Multiple verified buyers compete in real-time, driving prices up rather than down.</p>
+        </div>
+        <div class="step-arrow reveal">→</div>
+        <div class="step reveal">
+          <div class="step-num">03</div>
+          <div class="step-icon">🔒</div>
+          <h3>Escrow secures payment</h3>
+          <p>Funds are held safely in escrow and released to the farmer only upon delivery confirmation.</p>
+        </div>
+        <div class="step-arrow reveal">→</div>
+        <div class="step reveal">
+          <div class="step-num">04</div>
+          <div class="step-icon">🚛</div>
+          <h3>Coordinated delivery</h3>
+          <p>AgriLink's logistics partners handle transport so both sides get updates in real time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-// Scroll reveal
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  <section class="features" id="features">
+    <div class="features-inner">
+      <div class="reveal">
+        <span class="section-tag">Features</span>
+        <h2 class="section-title">Everything in one platform</h2>
+      </div>
 
-renderProducts('all');
-</script>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon-wrap">📦</div>
+          <h3>Product Listing System</h3>
+          <p>Create detailed harvest listings with photos, quantities, location, and a starting price. Go live in minutes.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon-wrap">🏷️</div>
+          <h3>Live Bidding Engine</h3>
+          <p>Real-time competitive bidding from verified buyers. Farmers choose the best offer — never the only offer.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon-wrap">🔐</div>
+          <h3>Escrow Payments</h3>
+          <p>Buyer funds are locked before delivery. Farmers receive payment automatically once the buyer confirms receipt.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon-wrap">🚚</div>
+          <h3>Logistics Coordination</h3>
+          <p>Partner couriers and real-time order tracking — no more chasing down drivers or arranging transport yourself.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon-wrap">🤝</div>
+          <h3>Harvest Pooling</h3>
+          <p>Small farmers can combine harvests to meet bulk buyer demand and access better prices together.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon-wrap">✅</div>
+          <h3>Buyer Verification</h3>
+          <p>All buyers are vetted before accessing the platform, protecting farmers from fraudulent deals.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="marketplace" id="marketplace">
+    <div class="marketplace-inner">
+      <div class="market-header reveal">
+        <div>
+          <span class="section-tag">Marketplace</span>
+          <h2 class="section-title">Browse fresh harvests</h2>
+        </div>
+
+        <div class="filter-tabs">
+          <button class="filter-tab active" onclick="filterProducts('all', this)">All</button>
+          <button class="filter-tab" onclick="filterProducts('rice', this)">Rice</button>
+          <button class="filter-tab" onclick="filterProducts('vegetable', this)">Vegetables</button>
+          <button class="filter-tab" onclick="filterProducts('fruit', this)">Fruits</button>
+        </div>
+      </div>
+
+      <div class="product-grid" id="product-grid"></div>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="bid-modal">
+    <div class="modal">
+      <div class="modal-head">
+        <h2>Place a Bid</h2>
+        <button class="modal-close" onclick="closeBidModal()">✕</button>
+      </div>
+
+      <div class="modal-product-info" id="modal-product-info"></div>
+
+      <div class="bid-history">
+        <h3>Current Bids</h3>
+        <div id="bid-list"></div>
+      </div>
+
+      <div class="bid-input-row">
+        <input type="number" id="bid-amount" placeholder="Your bid (₱)" min="0" />
+        <button class="btn btn-green" onclick="placeBid()" style="border-radius:12px; padding: 0.75rem 1.25rem;">Bid</button>
+      </div>
+
+      <p id="bid-msg" style="font-size: 0.8rem; color: var(--green-mid); margin-top: 0.75rem; min-height: 1.2em;"></p>
+    </div>
+  </div>
+
+  <section class="users" id="users">
+    <div class="users-inner">
+      <div class="reveal" style="text-align: center; margin-bottom: 1rem;">
+        <span class="section-tag">Who is AgriLink for?</span>
+        <h2 class="section-title">Built for both sides of the harvest</h2>
+      </div>
+
+      <div class="user-split">
+        <div class="user-panel farmer reveal">
+          <div class="panel-emoji">🌾</div>
+          <h3>For Farmers</h3>
+          <p>Stop depending on middlemen. Get your harvest in front of dozens of buyers and earn what your crops are worth.</p>
+          <ul class="user-list">
+            <li><span class="user-check">✓</span> List products in minutes with photos and pricing</li>
+            <li><span class="user-check">✓</span> Receive competing bids from verified buyers</li>
+            <li><span class="user-check">✓</span> Guaranteed payment via escrow before delivery</li>
+            <li><span class="user-check">✓</span> Logistics handled — no need to arrange transport</li>
+            <li><span class="user-check">✓</span> Pool harvests with other farmers for bulk deals</li>
+          </ul>
+          <a href="auth.html" class="btn btn-amber btn-lg" style="margin-top: 1.5rem;">Sign up as Farmer →</a>
+        </div>
+
+        <div class="user-panel buyer reveal">
+          <div class="panel-emoji">🛒</div>
+          <h3>For Buyers</h3>
+          <p>Source directly from farms. Restaurants, retailers, and distributors get fresh produce at transparent prices.</p>
+          <ul class="user-list">
+            <li><span class="user-check">✓</span> Browse categorized, fresh-listed produce</li>
+            <li><span class="user-check">✓</span> Bid competitively or purchase at fixed prices</li>
+            <li><span class="user-check">✓</span> Verified harvest quality and delivery dates</li>
+            <li><span class="user-check">✓</span> Direct access to smallholder farmers</li>
+            <li><span class="user-check">✓</span> Reliable delivery coordination built in</li>
+          </ul>
+          <a href="auth.html" class="btn btn-green btn-lg" style="margin-top: 1.5rem;">Sign up as Buyer →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="story">
+    <div class="story-inner reveal">
+      <span class="section-tag">A Farmer's Story</span>
+      <p class="story-quote">
+        "Before, I had no choice but to accept whatever the trader offered.
+        With AgriLink, three buyers competed for my rice — and I earned 40% more that season."
+      </p>
+
+      <div class="story-author">
+        <div class="author-avatar">👨‍🌾</div>
+        <div>
+          <div class="author-name">Carlo Reyes</div>
+          <div class="author-role">Rice Farmer, Nueva Ecija</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo">
+          <div class="nav-logo-icon">🌾</div>
+          Agri<span>Link</span>
+        </a>
+        <p style="margin-top: 1rem;">A digital market infrastructure for Filipino farmers. Bridging the gap between harvest and fair income.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="#how">How It Works</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#marketplace">Marketplace</a></li>
+          <li><a href="auth.html">Get Started</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="index.html">About Us</a></li>
+          <li><a href="index.html">Impact</a></li>
+          <li><a href="auth.html">Contact</a></li>
+          <li><a href="index.html">Privacy</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2025 AgriLink. All rights reserved.</span>
+      <span>Made for Filipino farmers 🇵🇭</span>
+    </div>
+  </footer>
+
+  <script>
+    const products = [
+      {
+        id: 1,
+        name: 'Jasmine Rice',
+        location: 'Nueva Ecija',
+        qty: '100 sacks',
+        price: '₱1,350/sack',
+        emoji: '🌾',
+        type: 'rice',
+        bidding: true,
+        startBid: 40500,
+        bids: [
+          { name: 'Rachel Cruz', amount: 40500, time: '10 min ago' },
+          { name: 'Juan Santos', amount: 38000, time: '25 min ago' }
+        ]
+      },
+      {
+        id: 2,
+        name: 'Indian Mangoes',
+        location: 'San Miguel, Bulacan',
+        qty: '50 kg',
+        price: '₱78/kg',
+        emoji: '🥭',
+        type: 'fruit',
+        bidding: true,
+        startBid: 3900,
+        bids: [
+          { name: 'Mary Lim', amount: 4200, time: '5 min ago' },
+          { name: 'Felix Go', amount: 3900, time: '30 min ago' }
+        ]
+      },
+      {
+        id: 3,
+        name: 'Pechay (Bok Choy)',
+        location: 'Bay, Laguna',
+        qty: '30 kg',
+        price: '₱45/kg',
+        emoji: '🥬',
+        type: 'vegetable',
+        bidding: false,
+        startBid: 1350,
+        bids: [
+          { name: 'Tita Reyes', amount: 1350, time: '1 hr ago' }
+        ]
+      },
+      {
+        id: 4,
+        name: 'Carrots',
+        location: 'La Trinidad, Benguet',
+        qty: '35 kg',
+        price: '₱55/kg',
+        emoji: '🥕',
+        type: 'vegetable',
+        bidding: true,
+        startBid: 1925,
+        bids: [
+          { name: 'Globe Mart', amount: 2100, time: '15 min ago' },
+          { name: 'FreshBox PH', amount: 1925, time: '45 min ago' }
+        ]
+      },
+      {
+        id: 5,
+        name: 'Saba Banana',
+        location: 'San Miguel, Bulacan',
+        qty: '200 pcs',
+        price: '₱8,200 total',
+        emoji: '🍌',
+        type: 'fruit',
+        bidding: true,
+        startBid: 8200,
+        bids: [
+          { name: 'Rico Dela Cruz', amount: 8200, time: '2 min ago' }
+        ]
+      },
+      {
+        id: 6,
+        name: 'Sweet Potato',
+        location: 'Ilocos Norte',
+        qty: '80 kg',
+        price: '₱35/kg',
+        emoji: '🍠',
+        type: 'vegetable',
+        bidding: false,
+        startBid: 2800,
+        bids: [
+          { name: 'Provincial Market', amount: 2800, time: '2 hrs ago' }
+        ]
+      }
+    ];
+
+    let activeFilter = 'all';
+    let activeProduct = null;
+
+    function renderProducts(filter) {
+      const grid = document.getElementById('product-grid');
+      const filtered = filter === 'all' ? products : products.filter(p => p.type === filter);
+
+      grid.innerHTML = filtered.map(p => `
+        <div class="product-card" onclick="openBidModal(${p.id})">
+          <div class="product-img">
+            <span style="font-size: 3.5rem;">${p.emoji}</span>
+            <span class="product-badge ${p.bidding ? 'badge-bidding' : 'badge-fixed'}">
+              ${p.bidding ? '🔴 Bidding' : '✅ Fixed Price'}
+            </span>
+          </div>
+          <div class="product-body">
+            <div class="product-name">${p.name}</div>
+            <div class="product-loc">📍 ${p.location}</div>
+            <div class="product-footer">
+              <div>
+                <div class="product-price">${p.price}</div>
+                <div class="product-qty">${p.qty}</div>
+              </div>
+              <button class="bid-btn">${p.bidding ? 'Bid Now' : 'Buy Now'}</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterProducts(type, el) {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      activeFilter = type;
+      renderProducts(type);
+    }
+
+    function openBidModal(id) {
+      activeProduct = products.find(p => p.id === id);
+      const info = document.getElementById('modal-product-info');
+
+      info.innerHTML = `
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="font-size: 2.5rem;">${activeProduct.emoji}</span>
+          <div>
+            <div class="product-name">${activeProduct.name}</div>
+            <div class="product-loc" style="font-size:0.82rem;color:var(--text-muted);">
+              📍 ${activeProduct.location} · ${activeProduct.qty}
+            </div>
+            <div style="font-size:1rem;font-weight:700;color:var(--green-dark);margin-top:4px;">
+              ${activeProduct.price}
+            </div>
+          </div>
+        </div>
+      `;
+
+      renderBids();
+      document.getElementById('bid-amount').value = '';
+      document.getElementById('bid-msg').textContent = '';
+      document.getElementById('bid-modal').classList.add('open');
+    }
+
+    function renderBids() {
+      const list = document.getElementById('bid-list');
+
+      list.innerHTML = activeProduct.bids.map((b, i) => `
+        <div class="bid-row" style="${i === 0 ? 'background:var(--green-pale);border-radius:8px;padding:0.6rem 0.5rem;' : ''}">
+          <span class="bidder">${i === 0 ? '🥇 ' : ''}${b.name}</span>
+          <span class="bid-amount">₱${b.amount.toLocaleString()}</span>
+          <span class="bid-time">${b.time}</span>
+        </div>
+      `).join('');
+    }
+
+    function placeBid() {
+      const val = parseFloat(document.getElementById('bid-amount').value);
+      const msg = document.getElementById('bid-msg');
+      const topBid = activeProduct.bids[0].amount;
+
+      if (!val || isNaN(val)) {
+        msg.textContent = 'Please enter a bid amount.';
+        msg.style.color = '#c00';
+        return;
+      }
+
+      if (val <= topBid) {
+        msg.textContent = `Bid must exceed the current top bid of ₱${topBid.toLocaleString()}.`;
+        msg.style.color = '#c00';
+        return;
+      }
+
+      activeProduct.bids.unshift({
+        name: 'You',
+        amount: val,
+        time: 'Just now'
+      });
+
+      renderBids();
+      msg.style.color = 'var(--green-mid)';
+      msg.textContent = `✅ Bid of ₱${val.toLocaleString()} placed successfully!`;
+      document.getElementById('bid-amount').value = '';
+      renderProducts(activeFilter);
+    }
+
+    function closeBidModal() {
+      document.getElementById('bid-modal').classList.remove('open');
+    }
+
+    document.getElementById('bid-modal').addEventListener('click', function (e) {
+      if (e.target === this) closeBidModal();
+    });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    renderProducts('all');
+  </script>
 </body>
 </html>
