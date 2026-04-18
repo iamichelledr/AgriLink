@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriLink – Sign In</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem;background:var(--bg);}
+.auth-wrap{width:100%;max-width:420px;}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--textd);font-size:.85rem;margin-bottom:1.5rem;cursor:pointer;}
+.back-link:hover{color:var(--g600);}
+.auth-card{background:var(--white);border:1px solid var(--border);border-radius:24px;padding:2rem;box-shadow:var(--shadow);}
+.auth-tag{display:inline-flex;align-items:center;gap:6px;background:var(--g50);color:var(--g800);font-size:.75rem;font-weight:700;padding:.35rem .9rem;border-radius:50px;margin-bottom:1rem;}
+.auth-title{font-size:1.5rem;font-weight:700;margin-bottom:.35rem;color:var(--g900);}
+.auth-sub{font-size:.875rem;color:var(--textd);margin-bottom:1.5rem;}
+.auth-switch{text-align:center;margin-top:1.25rem;font-size:.85rem;color:var(--textd);}
+.auth-switch a{color:var(--g600);font-weight:600;}
+.role-toggle{display:flex;gap:.5rem;margin-bottom:1.25rem;}
+.rtab{flex:1;padding:.5rem;border-radius:10px;font-size:.85rem;font-weight:600;border:1.5px solid var(--border);background:var(--white);cursor:pointer;transition:all .15s;color:var(--textm);text-align:center;}
+.rtab.active{background:var(--g800);color:#fff;border-color:var(--g800);}
+</style>
+</head>
+<body>
+<script src="js/db.js"></script>
+<div class="auth-wrap">
+  <a href="index.html" class="back-link">← Back to Home</a>
+  <div class="auth-card">
+    <div id="auth-tag" class="auth-tag">🌾 Farmer</div>
+    <div id="auth-title" class="auth-title">Create your account</div>
+    <div id="auth-sub" class="auth-sub">Join AgriLink and start earning more</div>
+    <div id="auth-form"></div>
+    <div id="auth-switch" class="auth-switch"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const params=new URLSearchParams(location.search);
+let role=params.get('role')||'farmer';
+let mode=params.get('mode')||'register';
+
+function render(){
+  const isReg=mode==='register';
+  document.getElementById('auth-tag').textContent=role==='farmer'?'🌾 Farmer':'🛒 Buyer';
+  document.getElementById('auth-title').textContent=isReg?'Create your account':'Welcome back';
+  document.getElementById('auth-sub').textContent=isReg?'Join AgriLink for free':'Sign in to continue';
+
+  document.getElementById('auth-form').innerHTML=isReg?`
+    <div class="role-toggle">
+      <div class="rtab ${role==='farmer'?'active':''}" onclick="role='farmer';render()">👨‍🌾 Farmer</div>
+      <div class="rtab ${role==='buyer'?'active':''}" onclick="role='buyer';render()">🛒 Buyer</div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">First Name</label><input id="a-fname" class="form-input" placeholder="Juan"></div>
+      <div class="form-group"><label class="form-label">Last Name</label><input id="a-lname" class="form-input" placeholder="dela Cruz"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Phone / GCash Number</label><input id="a-phone" class="form-input" placeholder="09XXXXXXXXX" maxlength="11"></div>
+    <div class="form-group"><label class="form-label">Location / Province</label><input id="a-loc" class="form-input" placeholder="Nueva Ecija"></div>
+    <div class="form-group"><label class="form-label">Password</label><input id="a-pass" type="password" class="form-input" placeholder="Min. 6 characters"></div>
+    <button class="btn btn-green btn-block btn-lg" onclick="doRegister()">Create Account →</button>
+  `:`
+    <div class="form-group"><label class="form-label">Phone Number</label><input id="a-phone" class="form-input" placeholder="09XXXXXXXXX" maxlength="11"></div>
+    <div class="form-group"><label class="form-label">Password</label><input id="a-pass" type="password" class="form-input" placeholder="Password"></div>
+    <button class="btn btn-green btn-block btn-lg" onclick="doLogin()">Log In →</button>
+    <p style="text-align:center;font-size:.8rem;color:var(--textd);margin-top:.75rem;">Demo: 09171234567 (farmer) or 09281234567 (buyer) · password: demo123</p>
+  `;
+
+  document.getElementById('auth-switch').innerHTML=isReg
+    ?`Already have an account? <a href="auth.html?mode=login">Log in</a>`
+    :`Don't have an account? <a href="auth.html?role=${role}&mode=register">Sign up</a>`;
+}
+
+function doRegister(){
+  const fname=document.getElementById('a-fname')?.value.trim();
+  const lname=document.getElementById('a-lname')?.value.trim();
+  const phone=document.getElementById('a-phone').value.trim();
+  const loc=document.getElementById('a-loc')?.value.trim();
+  const pass=document.getElementById('a-pass').value;
+  if(!fname||!lname||!phone||!pass){toast('Please fill in all fields.',true);return;}
+  if(pass.length<6){toast('Password must be at least 6 characters.',true);return;}
+  if(DB.users().find(u=>u.phone===phone)){toast('Phone number already registered.',true);return;}
+  const user={id:uid(),name:fname+' '+lname,phone,location:loc||'Philippines',role,password:pass,gcash:phone,created_at:Date.now()};
+  DB.addUser(user);DB.setCurrentUser(user);
+  toast('Welcome, '+fname+'! 🎉');
+  setTimeout(()=>window.location.href=role==='farmer'?'farmer-dashboard.html':'buyer-marketplace.html',600);
+}
+
+function doLogin(){
+  const phone=document.getElementById('a-phone').value.trim();
+  const pass=document.getElementById('a-pass').value;
+  const user=DB.users().find(u=>u.phone===phone&&u.password===pass);
+  if(!user){toast('Wrong phone number or password.',true);return;}
+  DB.setCurrentUser(user);
+  toast('Welcome back, '+user.name.split(' ')[0]+'!');
+  setTimeout(()=>window.location.href=user.role==='farmer'?'farmer-dashboard.html':'buyer-marketplace.html',600);
+}
+
+seedDemo();
+render();
+</script>
+</body>
+</html>

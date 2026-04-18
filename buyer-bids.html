@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriLink – My Bids</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<script src="js/db.js"></script>
+<div class="toast" id="toast"></div>
+<div class="overlay" id="overlay-gcash"><div class="modal" id="modal-gcash"></div></div>
+
+<script>
+const u=requireAuth('buyer');
+if(u){
+  renderTopbar();
+  const myBids=DB.bids().filter(b=>b.buyer_id===u.id).sort((a,b)=>b.created_at-a.created_at);
+  document.body.insertAdjacentHTML('beforeend',`
+  <div class="dash-layout">
+    ${renderSidebar('bids')}
+    <div class="dash-content">
+      <div class="page-title">My Bids</div>
+      <div class="page-sub">All bids you have placed (${myBids.length} bids)</div>
+      ${myBids.length===0
+        ?`<div class="card"><div class="empty"><div class="empty-ico">⚡</div><h3>No bids yet</h3><p>Go to the Marketplace and start bidding on fresh harvests!</p><br><a href="buyer-marketplace.html" class="btn btn-green">Browse Marketplace</a></div></div>`
+        :`<div style="display:flex;flex-direction:column;gap:.75rem;">
+          ${myBids.map(b=>{
+            const prod=DB.products().find(p=>p.id===b.product_id)||{};
+            const allBids=DB.bids().filter(x=>x.product_id===b.product_id).sort((a,c)=>c.amount-a.amount);
+            const topBid=allBids[0];
+            const isTop=topBid&&topBid.id===b.id;
+            const wonOrder=DB.orders().find(o=>o.bid_id===b.id);
+            const isPaid=wonOrder&&wonOrder.gcash_status!=='pending';
+            return`<div class="card card-sm flex fac fjb gap2" style="flex-wrap:wrap;">
+              <div class="flex fac gap1">
+                <div class="thumb-sm">${prod.photo?`<img src="${prod.photo}">`:(prod.emoji||'📦')}</div>
+                <div>
+                  <div class="bold">${prod.name||'Unknown Product'}</div>
+                  <div class="text-muted">📍 ${prod.location||''} · ${timeAgo(b.created_at)}</div>
+                  <div class="text-muted">${prod.quantity||''} ${prod.unit||''}</div>
+                </div>
+              </div>
+              <div class="text-center">
+                <div class="bold" style="font-size:1.15rem;">${fmtMoney(b.amount)}</div>
+                <div class="text-muted">your bid</div>
+              </div>
+              <div class="flex fac gap1" style="flex-wrap:wrap;">
+                ${wonOrder
+                  ? isPaid
+                    ? `<span class="badge badge-green">✅ Paid</span>`
+                    : `<span class="badge badge-amber">🏆 Won!</span><button class="btn btn-amber btn-sm" onclick="openGCash('${wonOrder.id}')">💙 Pay GCash</button>`
+                  : isTop
+                    ? `<span class="badge badge-blue">🥇 Top Bid</span>`
+                    : `<span class="badge badge-gray">Outbid</span><a href="buyer-marketplace.html" class="btn btn-outline btn-sm">Raise Bid</a>`}
+              </div>
+            </div>`;
+          }).join('')}
+        </div>`}
+    </div>
+  </div>`);
+}
+</script>
+</body>
+</html>

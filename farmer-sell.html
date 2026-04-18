@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriLink – Sell Harvest</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<script src="js/db.js"></script>
+<div class="toast" id="toast"></div>
+
+<script>
+const u=requireAuth('farmer');
+if(u){
+  renderTopbar();
+  document.body.insertAdjacentHTML('beforeend',`
+  <div class="dash-layout">
+    ${renderSidebar('sell')}
+    <div class="dash-content">
+      <div class="page-title">Sell Your Harvest</div>
+      <div class="page-sub">Fill in the details to create a new listing. Buyers can start bidding immediately.</div>
+      <div class="card" style="max-width:580px;">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Product Name *</label><input id="s-name" class="form-input" placeholder="e.g. Jasmine Rice"></div>
+          <div class="form-group"><label class="form-label">Category *</label>
+            <select id="s-cat" class="form-input"><option value="rice">🌾 Rice</option><option value="vegetable">🥬 Vegetable</option><option value="fruit">🍑 Fruit</option><option value="other">📦 Other</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Quantity *</label><input id="s-qty" class="form-input" type="number" min="1" placeholder="100"></div>
+          <div class="form-group"><label class="form-label">Unit *</label>
+            <select id="s-unit" class="form-input"><option>sacks</option><option>kg</option><option>pcs</option><option>bundles</option><option>boxes</option><option>crates</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Starting Price (₱) *</label><input id="s-price" class="form-input" type="number" min="1" placeholder="1350"></div>
+          <div class="form-group"><label class="form-label">Location *</label><input id="s-loc" class="form-input" placeholder="Nueva Ecija" value="${u.location||''}"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Description</label><textarea id="s-desc" class="form-input" placeholder="Grade, quality, harvest date, etc."></textarea></div>
+        <div class="form-group">
+          <label class="form-label">Product Photo</label>
+          <div class="photo-upload" id="upload-area">
+            <input type="file" accept="image/*" onchange="handlePhoto(event)">
+            <div id="upload-placeholder"><div style="font-size:1.8rem;margin-bottom:.35rem;">📷</div><div style="font-size:.85rem;color:var(--textd)">Click to upload a photo</div></div>
+            <img id="photo-preview" class="photo-preview hidden" alt="preview">
+          </div>
+        </div>
+        <div style="background:var(--g50);border-radius:12px;padding:1rem;font-size:.85rem;color:var(--g700);margin-bottom:1.25rem;">
+          💡 <strong>Tip:</strong> Set a competitive starting price. Buyers will bid above it — so start a bit lower to attract more bids.
+        </div>
+        <div class="flex gap1">
+          <button class="btn btn-green btn-lg" style="flex:1" onclick="submitListing()">🌾 Start Bidding</button>
+          <a href="farmer-listings.html" class="btn btn-ghost btn-lg">Cancel</a>
+        </div>
+      </div>
+    </div>
+  </div>`);
+}
+
+let uploadedPhoto=null;
+const catEmoji={rice:'🌾',vegetable:'🥬',fruit:'🍑',other:'📦'};
+
+function handlePhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    uploadedPhoto=ev.target.result;
+    document.getElementById('photo-preview').src=uploadedPhoto;
+    document.getElementById('photo-preview').classList.remove('hidden');
+    document.getElementById('upload-placeholder').style.display='none';
+  };
+  r.readAsDataURL(f);
+}
+
+function submitListing(){
+  const name=document.getElementById('s-name').value.trim();
+  const cat=document.getElementById('s-cat').value;
+  const qty=document.getElementById('s-qty').value;
+  const unit=document.getElementById('s-unit').value;
+  const price=document.getElementById('s-price').value;
+  const loc=document.getElementById('s-loc').value.trim();
+  const desc=document.getElementById('s-desc').value.trim();
+  if(!name||!qty||!price||!loc){toast('Please fill in all required fields (*)',true);return;}
+  if(Number(qty)<=0||Number(price)<=0){toast('Quantity and price must be greater than 0.',true);return;}
+  const prod={id:uid(),farmer_id:u.id,farmer_name:u.name,name,category:cat,quantity:Number(qty),unit,starting_price:Number(price),location:loc,description:desc,photo:uploadedPhoto,emoji:catEmoji[cat]||'📦',status:'active',created_at:Date.now()};
+  DB.addProduct(prod);
+  toast('Listing created! Buyers can now bid. 🎉');
+  setTimeout(()=>window.location.href='farmer-listings.html',800);
+}
+</script>
+</body>
+</html>

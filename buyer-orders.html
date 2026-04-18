@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriLink – My Orders</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<script src="js/db.js"></script>
+<div class="toast" id="toast"></div>
+<div class="overlay" id="overlay-gcash"><div class="modal" id="modal-gcash"></div></div>
+<div class="overlay" id="overlay-track"><div class="modal" id="modal-track"></div></div>
+
+<script>
+const u=requireAuth('buyer');
+if(u){
+  renderTopbar();
+  const orders=DB.orders().filter(o=>o.buyer_id===u.id).reverse();
+  document.body.insertAdjacentHTML('beforeend',`
+  <div class="dash-layout">
+    ${renderSidebar('orders')}
+    <div class="dash-content">
+      <div class="page-title">My Orders</div>
+      <div class="page-sub">Track your purchases and GCash payments (${orders.length} orders)</div>
+      ${orders.length===0
+        ?`<div class="card"><div class="empty"><div class="empty-ico">📦</div><h3>No orders yet</h3><p>Win a bid to place an order. Go to My Bids to see if you've won!</p><br><a href="buyer-bids.html" class="btn btn-green">View My Bids</a></div></div>`
+        :`<div style="display:flex;flex-direction:column;gap:1rem;">
+          ${orders.map(o=>{
+            const prod=DB.products().find(p=>p.id===o.product_id)||{};
+            const sc={pending:'badge-amber',paid:'badge-blue',confirmed:'badge-green'}[o.gcash_status]||'badge-gray';
+            const sl={pending:'⏳ Payment Pending',paid:'💙 Paid – In Transit',confirmed:'✅ Delivered'}[o.gcash_status]||o.gcash_status;
+            return`<div class="card flex fac fjb gap2" style="flex-wrap:wrap;">
+              <div class="flex fac gap1">
+                <div class="thumb-sm">${prod.photo?`<img src="${prod.photo}">`:(prod.emoji||'📦')}</div>
+                <div>
+                  <div class="bold">${prod.name||'Product'}</div>
+                  <div class="text-muted">Farmer: ${o.farmer_name}</div>
+                  <div class="text-muted">${fmtDate(o.created_at)} · Ref: ${o.gcash_ref}</div>
+                </div>
+              </div>
+              <div class="text-center">
+                <div class="bold" style="font-size:1.15rem;color:var(--g800)">${fmtMoney(o.amount)}</div>
+              </div>
+              <div class="flex fac gap1" style="flex-wrap:wrap;">
+                <span class="badge ${sc}">${sl}</span>
+                ${o.gcash_status==='pending'?`<button class="btn btn-amber btn-sm" onclick="openGCash('${o.id}')">💙 Pay GCash</button>`:''}
+                <button class="btn btn-outline btn-sm" onclick="openTracking('${o.id}')">📍 Track</button>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>`}
+    </div>
+  </div>`);
+}
+</script>
+</body>
+</html>

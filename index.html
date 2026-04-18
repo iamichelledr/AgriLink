@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriLink – Bridging Farmers and Buyers</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#1a300a 0%,#3d6b1a 100%);padding:2rem;}
+.box{text-align:center;max-width:480px;width:100%;}
+.big-logo{font-family:'Playfair Display',serif;font-size:3rem;color:#fff;margin-bottom:.4rem;}
+.big-logo span{color:#f5b942;}
+.tagline{color:rgba(255,255,255,.6);font-size:1rem;margin-bottom:2.5rem;}
+.role-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.role-card{background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);border-radius:18px;padding:2rem 1rem;cursor:pointer;transition:all .2s;display:block;text-decoration:none;}
+.role-card:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35);transform:translateY(-3px);}
+.role-icon{font-size:2.5rem;margin-bottom:.75rem;}
+.role-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:.35rem;}
+.role-desc{font-size:.78rem;color:rgba(255,255,255,.55);line-height:1.5;}
+.login-row{color:rgba(255,255,255,.5);font-size:.85rem;}
+.login-row a{color:#f5b942;font-weight:600;}
+.dot-live{width:8px;height:8px;border-radius:50%;background:#6ea832;display:inline-block;margin-right:6px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.3);}}
+.live-badge{display:inline-flex;align-items:center;background:rgba(110,168,50,.2);border:1px solid rgba(110,168,50,.3);color:rgba(255,255,255,.75);font-size:.75rem;font-weight:700;padding:.35rem .9rem;border-radius:50px;margin-bottom:1.5rem;letter-spacing:.05em;text-transform:uppercase;}
+</style>
+</head>
+<body>
+<script src="js/db.js"></script>
+<div class="box">
+  <div class="live-badge"><span class="dot-live"></span>Now live in the Philippines</div>
+  <div class="big-logo">Agri<span>Link</span></div>
+  <div class="tagline">Bridging Filipino Farmers and Buyers</div>
+  <div class="role-cards">
+    <a href="auth.html?role=farmer&mode=register" class="role-card">
+      <div class="role-icon">👨‍🌾</div>
+      <div class="role-title">I'm a Farmer</div>
+      <div class="role-desc">List your harvest and receive competitive bids from buyers</div>
+    </a>
+    <a href="auth.html?role=buyer&mode=register" class="role-card">
+      <div class="role-icon">🛒</div>
+      <div class="role-title">I'm a Buyer</div>
+      <div class="role-desc">Browse fresh harvests and bid on the best produce</div>
+    </a>
+  </div>
+  <div class="login-row">Already have an account? <a href="auth.html?mode=login">Log in here</a></div>
+</div>
+<script>
+seedDemo();
+const u=DB.currentUser();
+if(u){window.location.href=u.role==='farmer'?'farmer-dashboard.html':'buyer-marketplace.html';}
+</script>
+</body>
+</html>

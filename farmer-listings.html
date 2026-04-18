@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriLink – My Listings</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<script src="js/db.js"></script>
+<div class="toast" id="toast"></div>
+<div class="overlay" id="overlay-bid"><div class="modal" id="modal-bid"></div></div>
+
+<script>
+const u=requireAuth('farmer');
+if(u){
+  renderTopbar();
+  const prods=DB.products().filter(p=>p.farmer_id===u.id).reverse();
+  document.body.insertAdjacentHTML('beforeend',`
+  <div class="dash-layout">
+    ${renderSidebar('listings')}
+    <div class="dash-content">
+      <div class="sec-header">
+        <div><div class="page-title">My Listings</div><div class="page-sub">All your harvest listings (${prods.length} total)</div></div>
+        <a href="farmer-sell.html" class="btn btn-green">+ New Listing</a>
+      </div>
+      ${prods.length===0
+        ?`<div class="card"><div class="empty"><div class="empty-ico">📦</div><h3>No listings yet</h3><p>Create your first listing to start receiving bids.</p></div></div>`
+        :`<div class="card card-sm" style="overflow-x:auto;">
+          <table class="list-table"><thead><tr>
+            <th>Product</th><th>Location</th><th>Qty</th><th>Starting Price</th><th>Top Bid</th><th>Bids</th><th>Status</th><th></th>
+          </tr></thead><tbody>
+          ${prods.map(p=>{const tb=getTopBid(p.id);return`<tr>
+            <td><div class="flex fac gap1"><div class="thumb-sm">${p.photo?`<img src="${p.photo}">`:(p.emoji||'📦')}</div><span class="bold">${p.name}</span></div></td>
+            <td>${p.location}</td><td>${p.quantity} ${p.unit}</td>
+            <td>${fmtMoney(p.starting_price)}</td>
+            <td>${tb?`<span class="bold" style="color:var(--g700)">${fmtMoney(tb.amount)}</span>`:'—'}</td>
+            <td><span class="badge badge-amber">${getBidCount(p.id)}</span></td>
+            <td><span class="badge ${p.status==='active'?'badge-green':'badge-gray'}">${p.status}</span></td>
+            <td><button class="btn btn-outline btn-sm" onclick="openBids('${p.id}')">View Bids</button></td>
+          </tr>`;}).join('')}
+          </tbody></table></div>`}
+    </div>
+  </div>`);
+}
+
+function openBids(pid){
+  const prod=DB.products().find(p=>p.id===pid);
+  const bids=DB.bids().filter(b=>b.product_id===pid).sort((a,b)=>b.amount-a.amount);
+  document.getElementById('modal-bid').innerHTML=`
+    <div class="modal-head"><h2>Bids on ${prod.name}</h2><button class="modal-close" onclick="closeModal('overlay-bid')">✕</button></div>
+    <div class="modal-body">
+      <div class="card card-sm mb1 flex fac gap1">
+        <div class="thumb-sm">${prod.photo?`<img src="${prod.photo}">`:(prod.emoji||'📦')}</div>
+        <div><div class="bold">${prod.name}</div><div class="text-muted">${prod.quantity} ${prod.unit} · ${prod.location}</div><div class="bold" style="color:var(--g700)">Starting: ${fmtMoney(prod.starting_price)}</div></div>
+      </div>
+      ${bids.length===0?`<div class="empty"><div class="empty-ico">📭</div><h3>No bids yet</h3></div>`:''}
+      ${bids.map((b,i)=>`<div class="bid-item ${i===0?'top':''} flex fac fjb">
+        <div><div class="bid-buyer">${i===0?'🥇 ':''}${b.buyer_name}</div><div class="bid-time">${timeAgo(b.created_at)}</div></div>
+        <div class="flex fac gap1"><div class="bid-amount">${fmtMoney(b.amount)}</div>
+        ${i===0&&prod.status==='active'?`<button class="btn btn-green btn-sm" onclick="acceptBid('${b.id}','${pid}')">Accept</button>`:''}
+        </div></div>`).join('')}
+    </div>`;
+  openModal('overlay-bid');
+}
+
+function acceptBid(bidId,pid){
+  const bid=DB.bids().find(b=>b.id===bidId);
+  const prod=DB.products().find(p=>p.id===pid);
+  const order={id:uid(),product_id:pid,bid_id:bidId,farmer_id:u.id,buyer_id:bid.buyer_id,buyer_name:bid.buyer_name,farmer_name:u.name,amount:bid.amount,gcash_status:'pending',track_status:'confirmed',created_at:Date.now(),gcash_ref:'GC'+uid().toUpperCase().slice(0,8)};
+  DB.addOrder(order);DB.updateProduct(pid,{status:'sold'});
+  closeModal('overlay-bid');toast('Bid accepted! 🎉');
+  setTimeout(()=>location.reload(),800);
+}
+</script>
+</body>
+</html>
